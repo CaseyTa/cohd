@@ -30,7 +30,7 @@ app.config.from_pyfile(u'cohd_flask.conf')
 
 @app.route(u'/')
 def api_omop_reference():
-    return u'Columbia Open Health Data'
+    return redirect("http://smart-api.info/ui/?url=/api/metadata/6c33ed14d628a982c79fa36a75dbbbcf")
 
 
 @app.route(u'/api/v1/omop/findConceptIDs')
