@@ -23,9 +23,3 @@ COHD is served on an AWS EC2 instance using Nginx and uWSGI. For consistency, us
 Caveats:
 
 - If using virtualenv, you either have to have the virtualenv directory in the same location as the cohd.py application, or specify the location of the virtualenv using the `uWSGI -H` parameter.
-
-# nsides back-end (drug effect database population)
-Please see [here](https://github.com/tatonetti-lab/nsides/tree/master/condor)
-
-# nsides middleware (on-demand job submission)
-Please see [here](https://github.com/tatonetti-lab/nsides/tree/master/job_api)

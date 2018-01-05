@@ -13,6 +13,7 @@ info:
     1. Clinical Frequencies: access to the counts and frequencies of conditions, procedures, and drug exposures, and the associations between them. Frequency was determined as the number of patients with the code(s) / total number of patients. 
     
   version: 1.0.0
+  termsOfService: "http://cohd.nsides.io/terms/"
   title: Columbia Open Health Data (COHD)
   contact:
     email: nick.tatonetti@columbia.edu
