@@ -1,0 +1,16 @@
+temp/*
+cohd_mysql.cnf
+.idea/*
+
+*.log
+*.mtx
+*.out
+*.err
+*.tgz
+*.crt
+*.key
+*~
+*.pyc
+*.ipynb_checkpoints
+
+*#*#

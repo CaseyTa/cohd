@@ -1,0 +1,156 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://cohd.nsides.io/api/v1'
+info:
+  description: >
+    The Columbia Open Health Data (COHD) API provides access to counts and frequencies of conditions, procedures, and drug exposures, and the associations between them. Condition, procedures, and drug exposures are coded by their stanard concept ID in the OMOP Common Data Model. 
+
+    The following resources are available through this API: 
+
+    1. OMOP: access to the common vocabulary for name and concept identifier
+    mapping
+
+    1. Clinical Frequencies: access to the counts and frequencies of conditions, procedures, and drug exposures, and the associations between them. Frequency was determined as the number of patients with the code(s) / total number of patients. 
+    
+  version: 1.0.0
+  title: Columbia Open Health Data (COHD)
+  contact:
+    email: nick.tatonetti@columbia.edu
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+- name: "OMOP"
+  description: "OMOP Common Data Model concepts"
+- name: "Clinical Frequencies"
+  description: "Clinical frequency data"
+paths:
+  /omop/findConceptIDs:
+    get:
+      tags: 
+      - 'OMOP'
+      summary: 'Search for OMOP concepts'
+      description: 'Searches the OMOP concept table for concept names similar to the query. Returns a list of concepts, including their names and IDs.'
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 'The name of the concept to search for, e.g., "cancer" or "ibuprofen"'
+          example: 'cancer'
+      operationId: reference
+      responses:
+        default:
+          description: Default response
+  /omop/concepts:
+    get:
+      tags:
+      - 'OMOP'
+      summary: 'Concepts'
+      description: 'Returns the OMOP concept names and domains for the given list of concept IDs.'
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: A comma separated list of OMOP concept ids, e.g., "192855" or "192855,2008271"
+          example: '192855,2008271'
+      operationId: concepts
+      responses:
+        default:
+          description: Default response
+  /frequencies/singleConceptFreq:
+    get:
+      tags:
+      - 'Clinical Frequencies'
+      summary: 'Clinical frequency of individual concepts'
+      description: 'Retrieves observed clinical frequencies of individual concepts. Multiple concepts may be requested in a comma separated list.'
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: A comma separated list of OMOP concept ids, e.g., "192855" or "192855,2008271"
+          example: '192855'
+      operationId: singleConceptFreq
+      responses:
+        default:
+          description: Default response
+  /frequencies/pairedConceptFreq:
+    get:
+      tags:
+      - 'Clinical Frequencies'
+      summary: 'Clinical frequency of a pair of concepts'
+      description: 'Retrieves observed clinical frequencies of a pair of concepts.'
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: A comma pair of OMOP concept ids, e.g., "192855,2008271"
+          example: '192855,2008271'
+      operationId: pairedConceptFreq
+      responses:
+        default:
+          description: Default response      
+  /frequencies/associatedConceptFreq:
+    get:
+      tags:
+      - 'Clinical Frequencies'
+      summary: 'Clinical frequencies of all pairs of concepts given a concept id'
+      description: 'Retrieves observed clinical frequencies of a pair of all pairs of concepts given a concept id.'
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: An OMOP concept id, e.g., "192855"
+          example: '192855'
+      operationId: pairedConceptFreq
+      responses:
+        default:
+          description: Default response         
+  /frequencies/associatedConceptDomainFreq:
+    get:
+      tags:
+      - 'Clinical Frequencies'
+      summary: 'Clinical frequencies of all pairs of concepts given a concept id'
+      description: 'Retrieves observed clinical frequencies of all pairs of concepts given a concept id restricted by domain of the associated concept_id'
+      parameters:
+        - name: concept_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: An OMOP concept id, e.g., "192855"
+          example: '192855'
+        - name: domain
+          in: query
+          required: true
+          schema:
+            type: string
+          description: An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc.
+          example: 'Procedure'
+      operationId: pairedConceptFreq
+      responses:
+        default:
+          description: Default response           
+externalDocs:
+  description: ''
+  url: 'http://cohd.nsides.io'
+components:
+  schemas: {}
+  responses: {}
+  parameters: {}
+  examples: {}
+  requestBodies: {}
+  securitySchemes: {}
+  headers: {}
+  links: {}
+  callbacks: {}
+security: []

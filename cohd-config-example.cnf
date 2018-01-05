@@ -1,0 +1,6 @@
+[client]
+host = server.domain.region.rds.amazonaws.com
+port = 3306
+user = 
+password = <
+database = cohd
