@@ -140,7 +140,25 @@ paths:
       operationId: pairedConceptFreq
       responses:
         default:
-          description: Default response           
+          description: Default response         
+  /frequencies/mostFrequentConcepts:
+    get:
+      tags:
+      - 'Clinical Frequencies'
+      summary: 'Most frequent concepts'
+      description: 'Retrieves the most frequent concepts.'
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The number of concepts to retreieve, e.g., "100"
+          example: '100'
+      operationId: mostFrequentConcepts
+      responses:
+        default:
+          description: Default response         
 externalDocs:
   description: ''
   url: 'http://cohd.nsides.io'

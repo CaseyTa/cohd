@@ -29,7 +29,7 @@ app.config.from_pyfile(u'cohd_flask.conf')
 
 
 @app.route(u'/')
-def api_omop_reference():
+def api_cohd():
     return redirect("http://smart-api.info/ui/?url=/api/metadata/6c33ed14d628a982c79fa36a75dbbbcf")
 
 
@@ -63,6 +63,11 @@ def api_frequencies_associatedConceptDomainFreq():
     return api_call(u'frequencies', u'associatedConceptDomainFreq')
 
 
+@app.route(u'/api/v1/frequencies/mostFrequentConcepts')
+def api_frequencies_mostFrequentConcept():
+    return api_call(u'frequencies', u'mostFrequentConcepts')
+
+
 @app.route(u'/api/v1/query')
 def api_call(service=None, meta=None, query=None):
     if service is None:
@@ -87,7 +92,7 @@ def api_call(service=None, meta=None, query=None):
         if meta == u'findConceptIDs' or meta == u'concepts':
             json_result = query_cohd_mysql.query_db(service, meta, query)
     elif service == u'frequencies':
-        if meta == u'singleConceptFreq' or meta == u'pairedConceptFreq' or meta == u'associatedConceptFreq':
+        if meta == u'singleConceptFreq' or meta == u'pairedConceptFreq' or meta == u'associatedConceptFreq' or meta == u'mostFrequentConcepts':
             json_result = query_cohd_mysql.query_db(service, meta, query)
         elif meta == u'associatedConceptDomainFreq':
             concept_id = request.args.get(u'concept_id')

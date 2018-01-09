@@ -173,6 +173,29 @@ def query_db(service, method, query=False, cache=False):
                         u'associated_concept_name': result[u'associated_concept_name']
                     })
 
+        # Returns most common single concept frequencies
+        # e.g. /api/v1/query?service=omop&meta=mostFrequentConcept&q=100
+        elif method == u'mostFrequentConcepts':
+            sql = '''SELECT concept_counts.*, concept.domain_id, concept.concept_name 
+                    FROM cohd.concept_counts JOIN cohd.concept 
+                    ON concept_counts.concept_id = concept.concept_id
+                    ORDER BY concept_count DESC 
+                    LIMIT {limit_n}'''.format(limit_n=query)
+
+            print sql
+
+            cur.execute(sql)
+            results = cur.fetchall()
+
+            for result in results:
+                json_return.append({
+                    u'concept_id': result[u'concept_id'],
+                    u'concept_count': result[u'concept_count'],
+                    u'concept_frequency': result[u'concept_frequency'],
+                    u'domain_id': result[u'domain_id'],
+                    u'concept_name': result[u'concept_name']
+                })
+
     # print(json_return)
 
     cur.close()
