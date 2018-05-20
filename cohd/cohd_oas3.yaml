@@ -264,7 +264,7 @@ paths:
             vocabularies. See /omop/vocabularies for the list of supported
             vocabularies.
           example: ICD9CM
-      operationId: mapToStandardConceptID
+      operationId: mapFromStandardConceptID
       responses:
         default:
           description: Default response
@@ -442,7 +442,7 @@ paths:
             type: integer
           description: 'An OMOP concept id, e.g., "192855"'
           example: 192855
-      operationId: pairedConceptFreq
+      operationId: associatedConceptFreq
       responses:
         default:
           description: Default response
@@ -478,7 +478,7 @@ paths:
             type: string
           description: 'An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc.'
           example: Procedure
-      operationId: pairedConceptFreq
+      operationId: associatedConceptDomainFreq
       responses:
         default:
           description: Default response
@@ -713,7 +713,7 @@ paths:
             restrict concept_id_2 (the base concept) to. If this parameter is
             not specified, then the domain is unrestricted.
           example: Procedure
-      operationId: pairedConceptFreq
+      operationId: relativeFrequency
       responses:
         default:
           description: Default response
