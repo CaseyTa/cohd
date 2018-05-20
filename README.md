@@ -1,12 +1,13 @@
 # Columbia Open Health Data API (COHD)
 A database of frequencies of clinical concepts observed at Columbia University Medical Center. Over 17,000 clinical concepts and 8.7M pairs of clinical concepts, including conditions, drugs, and procedures are included. The COHD RESTful API allows users to query the database. 
 
-## Installation
-To install
+## Requirements
 
+Python 2.7
+
+Python packages: flask, flask_cors, pymysql
 ```
-pip install flask
-pip instll pymysql
+pip install flask flask_cors pymysql
 ```
 
 ## Running the Application
