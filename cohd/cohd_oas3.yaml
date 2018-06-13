@@ -3,51 +3,33 @@ servers:
   - url: 'http://cohd.nsides.io/api/'
 info:
   description: |
-    The Columbia Open Health Data (COHD) API provides access to counts and
-    frequencies of conditions, procedures, drug exposures, and patient
-    demographics, and the associations between them. Count and frequency data were derived from the CUMC OMOP database including inpatient and outpatient data. Counts are the number of patients diagnosed with a condition, exposed to a drug, or who had a procedure. To protect patient privacy, all concepts and pairs of concepts where the count <= 10 were excluded, and counts were randomized by the Poisson distribution. 
+    The Columbia Open Health Data (COHD) API provides access to counts and frequencies (i.e., EHR prevalence) of conditions, procedures, drug exposures, and patient demographics, and the co-occurrence frequencies between them. Count and frequency data were derived from the [Columbia University Medical Center's](http://www.cumc.columbia.edu/) [OHDSI](https://www.ohdsi.org/) database including inpatient and outpatient data. Counts are the number of patients associated with the concept, e.g., diagnosed with a condition, exposed to a drug, or who had a procedure. Frequencies are the number of patients associated with the concept divided by the total number of patients in the dataset, i.e., prevalence in the electronic health records. To protect patient privacy, all concepts and pairs of concepts where the count <= 10 were excluded, and counts were randomized by the Poisson distribution. 
     
     Two datasets are available: 
-    1) lifetime dataset: includes clinical data from all dates 
-    2) 5-year dataset: includes clinical data from 2013-2017. 
+    1) 5-year dataset: includes clinical data from 2013-2017  
+    2) lifetime dataset: includes clinical data from all dates  
     
     While the lifetime dataset captures a larger patient population and range of concepts, the 5-year dataset has better underlying data consistency. 
     
-    Clinical concepts (e.g.,
-    conditions, procedures, drugs) are coded by their standard concept ID in the
-    OMOP Common Data Model. API methods are provided to map to/from other
-    vocabularies supported in OMOP and other ontologies using the EMBL-EBI
-    Ontology Xref Service (OxO). 
+    Clinical concepts (e.g., conditions, procedures, drugs) are coded by their standard concept ID in the [OMOP Common Data Model](https://github.com/OHDSI/CommonDataModel/wiki). API methods are provided to map to/from other vocabularies supported in OMOP and other ontologies using the EMBL-EBI Ontology Xref Service (OxO). 
 
 
     The following resources are available through this API: 
 
 
-    1. Metadata: Metadata on the COHD database, including dataset descriptions,
-    number of concepts, etc. 
+    1. Metadata: Metadata on the COHD database, including dataset descriptions, number of concepts, etc. 
 
 
     2. OMOP: access to the common vocabulary for name and concept identifier mapping
 
 
-    3. Clinical Frequencies: access to the counts and frequencies of conditions,
-    procedures, and drug exposures, and the associations between them. Frequency
-    was determined as the number of patients with the code(s) / total number of
-    patients. 
+    3. Clinical Frequencies: access to the counts and frequencies of conditions, procedures, and drug exposures, and the associations between them. Frequency was determined as the number of patients with the code(s) / total number of patients. 
 
 
-    4. Concept Associations: Inferred associations between concepts using
-    chi-square analysis, ratio between observed to expected frequency, and
-    relative frequency. 
+    4. Concept Associations: Inferred associations between concepts using chi-square analysis, ratio between observed to expected frequency, and relative frequency. 
 
 
-    COHD was developed at the [Columbia University Department of Biomedical
-    Informatics](https://www.dbmi.columbia.edu/) as a collaboration between the
-    [Weng Lab](http://people.dbmi.columbia.edu/~chw7007/), [Tatonetti
-    Lab](http://tatonettilab.org/), and the [NCATS Biomedical Data
-    Translator](https://ncats.nih.gov/translator) program (Red Team). This work
-    was supported in part by grants: NCATS OT3TR002027, NLM R01LM009886-08A1,
-    and NIGMS R01GM107145.
+    COHD was developed at the [Columbia University Department of Biomedical Informatics](https://www.dbmi.columbia.edu/) as a collaboration between the [Weng Lab](http://people.dbmi.columbia.edu/~chw7007/), [Tatonetti Lab](http://tatonettilab.org/), and the [NCATS Biomedical Data Translator](https://ncats.nih.gov/translator) program (Red Team). This work was supported in part by grants: NCATS OT3TR002027, NLM R01LM009886-08A1, and NIGMS R01GM107145.
   version: 2.0.0
   termsOfService: 'http://cohd.nsides.io/terms/'
   title: Columbia Open Health Data (COHD)
@@ -70,6 +52,16 @@ tags:
     description: Clinical frequency data
   - name: Concept Associations
     description: Estimated association between concepts
+x-externalResources:
+  - x-url: 'https://www.dbmi.columbia.edu/'
+    x-type: website
+    x-description: "Department of Biomedical Informatics, Columbia University"
+  - x-url: 'https://www.ohdsi.org/'
+    x-type: website
+    x-description: "Observational Health Data Sciences and Informatics"
+  - x-url: 'https://github.com/OHDSI/CommonDataModel/wiki'
+    x-type: website
+    x-description: "OMOP CDM"
 paths:
   /metadata/datasets:
     get:
@@ -94,8 +86,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
       operationId: domainCounts
       responses:
@@ -107,8 +98,7 @@ paths:
         - Metadata
       summary: The number of pairs of concepts in each pair of domains
       description: >-
-        Returns a list of pairs of domains and the number of pairs of concepts
-        in each.
+        Returns a list of pairs of domains and the number of pairs of concepts in each.
       parameters:
         - name: dataset_id
           in: query
@@ -116,8 +106,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
       operationId: domainPairCounts
       responses:
@@ -136,8 +125,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
       operationId: patientCount
       responses:
@@ -149,8 +137,7 @@ paths:
         - OMOP
       summary: Concept definitions from concept ID
       description: >-
-        Returns the OMOP concept names and domains for the given list of concept
-        IDs.
+        Returns the OMOP concept names and domains for the given list of concept IDs.
       parameters:
         - name: q
           in: query
@@ -158,8 +145,7 @@ paths:
           schema:
             type: string
           description: >-
-            A comma separated list of OMOP concept ids, e.g., "192855" or
-            "192855,2008271"
+            A comma separated list of OMOP concept ids, e.g., "192855" or "192855,2008271"
           example: '192855,2008271'
       operationId: concepts
       responses:
@@ -169,11 +155,9 @@ paths:
     get:
       tags:
         - OMOP
-      summary: Search for OMOP concepts by name
+      summary: Search for OMOP concepts by name and domain
       description: >-
-        Searches the OMOP concept table for concept names similar to the query.
-        Returns a list of concepts, including their names and IDs, sorted in 
-        decreasing order by the concept's prevalence. 
+        Searches the OMOP concept table for concept names similar to the query. Returns a list of concepts, including their names and IDs, sorted in decreasing order by the concept's prevalence. 
       parameters:
         - name: q
           in: query
@@ -194,7 +178,7 @@ paths:
           required: false
           schema:
             type: string
-          description: 'The domain (e.g., "Condition", "Drug", "Procedure") to restrict the search to. If not specified, the search will be unrestricted.'
+          description: 'The domain (e.g., "Condition", "Drug", "Procedure") to restrict the search to. If not specified, the search will be unrestricted. See /metadata/domainCounts for a list of valid domain IDs.'
           example: 'Condition'
       operationId: findConceptIDs
       responses:
@@ -204,12 +188,9 @@ paths:
     get:
       tags:
         - OMOP
-      summary: Map from a non-standard concept code to a standard OMOP concept ID.
+      summary: Map from a non-standard concept code to a standard OMOP concept ID
       description: >-
-        Uses the OMOP concept_relationship table to map from a non-standard
-        concept code (e.g., ICD9CM 715.3) to a standard OMOP concept ID (e.g.,
-        72990). This method may return multiple results if vocabulary_id is not
-        specified and the concept_code is not unique across vocabularies. If both concept_code and vocabulary_id are specified, then 1 result will be returned at most. 
+        Uses the OMOP concept_relationship table to map from a non-standard concept code (e.g., ICD9CM 715.3) to a standard OMOP concept ID (e.g., 72990). This method may return multiple results if vocabulary_id is not specified and the concept_code is not unique across vocabularies. If both concept_code and vocabulary_id are specified, then 1 result will be returned at most. 
       parameters:
         - name: concept_code
           in: query
@@ -224,10 +205,7 @@ paths:
           schema:
             type: string
           description: >-
-            The vocabulary (e.g., "ICD9CM") that the concept code belongs to. If
-            this parameter is not specified, the method will return mappings
-            from any source vocabulary with matching concept code. See
-            /omop/vocabularies for the list of supported vocabularies.
+            The vocabulary (e.g., "ICD9CM") that the concept code belongs to. If this parameter is not specified, the method will return mappings from any source vocabulary with matching concept code. See /omop/vocabularies for the list of supported vocabularies.
           example: ICD9CM
       operationId: mapToStandardConceptID
       responses:
@@ -238,13 +216,9 @@ paths:
       tags:
         - OMOP
       summary: >-
-        Map from a standard concept ID to concept code(s) in an external
-        vocabulary.
+        Map from a standard concept ID to concept code(s) in an external vocabulary
       description: >-
-        Uses the OMOP concept_relationship table to map from a standard concept
-        ID (e.g., 72990) to concept code(s) (e.g., ICD9CM 715.3, 715.31, 715.32,
-        etc.). An OMOP standard concept ID may map to many concepts in the
-        external vocabulary.
+        Uses the OMOP concept_relationship table to map from a standard concept ID (e.g., 72990) to concept code(s) (e.g., ICD9CM 715.3, 715.31, 715.32, etc.). An OMOP standard concept ID may map to many concepts in the external vocabulary.
       parameters:
         - name: concept_id
           in: query
@@ -259,10 +233,7 @@ paths:
           schema:
             type: string
           description: >-
-            The vocabulary (e.g., "ICD9CM") to map to. If this parameter is not
-            specified, the method will return mappings to any matching
-            vocabularies. See /omop/vocabularies for the list of supported
-            vocabularies.
+            The vocabulary (e.g., "ICD9CM") to map to. If this parameter is not specified, the method will return mappings to any matching vocabularies. See /omop/vocabularies for the list of supported vocabularies.
           example: ICD9CM
       operationId: mapFromStandardConceptID
       responses:
@@ -272,11 +243,9 @@ paths:
     get:
       tags:
         - OMOP
-      summary: List of vocabularies.
+      summary: List of vocabularies
       description: >-
-        List of vocabulary_ids. Useful if you need to use
-        /omop/mapToStandardConceptID to map a concept code from a source
-        vocabulary to the OMOP standard vocabulary.
+        List of vocabulary_ids. Useful if you need to use /omop/mapToStandardConceptID to map a concept code from a source vocabulary to the OMOP standard vocabulary.
       operationId: vocabularies
       responses:
         default:
@@ -285,14 +254,9 @@ paths:
     get:
       tags:
         - OMOP
-      summary: Cross-reference from an ontology to OMOP standard concepts
+      summary: Cross-reference from an ontology to OMOP standard concepts using the Ontology Xref Service
       description: >-
-        Attempts to map a concept from an external ontology to an OMOP standard
-        concept ID using the EMBL-EBI Ontology Xref Service (OxO):
-        https://www.ebi.ac.uk/spot/oxo/index. This method attempts to use OxO to
-        map from the original ontology to an intermediate ontology that is
-        included in OMOP (ICD9CM, ICD10CM, SNOMEDCT, and MeSH), then uses the
-        OMOP mappings to the standard concepts. Multiple mappings may be returned. Results are sorted by total_distance (OxO distance + OMOP distance) in ascending order.
+        Attempts to map a concept from an external ontology to an OMOP standard concept ID using the EMBL-EBI Ontology Xref Service (OxO): https://www.ebi.ac.uk/spot/oxo/index. This method attempts to use OxO to map from the original ontology to an intermediate ontology that is included in OMOP (ICD9CM, ICD10CM, SNOMEDCT, and MeSH), then uses the OMOP mappings to the standard concepts. Multiple mappings may be returned. Results are sorted by total_distance (OxO distance + OMOP distance) in ascending order.
       parameters:
         - name: curie
           in: query
@@ -307,10 +271,7 @@ paths:
           schema:
             type: integer
           description: >-
-            Mapping distance for OxO. Note: this is the distance used in the OxO
-            API to map from the original concept to an ICD9CM, ICD10CM,
-            SNOMEDCT, or MeSH concept. One additional step may be taken by the
-            COHD API to map to the OMOP standard concept. Default: 2.
+            Mapping distance for OxO. Note: this is the distance used in the OxO API to map from the original concept to an ICD9CM, ICD10CM, SNOMEDCT, or MeSH concept. One additional step may be taken by the COHD API to map to the OMOP standard concept. Default: 2.
           example: 2
       operationId: xrefToOMOP
       responses:
@@ -320,14 +281,9 @@ paths:
     get:
       tags:
         - OMOP
-      summary: Cross-reference from an ontology to OMOP standard concepts
+      summary: Cross-reference from an ontology to OMOP standard concepts using the Ontology Xref Service
       description: >-
-        Attempts to map a concept from an external ontology to an OMOP standard
-        concept ID using the EMBL-EBI Ontology Xref Service (OxO):
-        https://www.ebi.ac.uk/spot/oxo/index. This method maps from the OMOP
-        standard concept to an intermediate vocabulary included is OxO (ICD9CM,
-        ICD10CM, SNOMEDCT, and MeSH), then uses the OxO API to map to other
-        ontologies. Multiple mappings may be returned. Results are sorted by total_distance (OxO distance + OMOP distance) in ascending order.
+        Attempts to map a concept from an external ontology to an OMOP standard concept ID using the EMBL-EBI Ontology Xref Service (OxO): https://www.ebi.ac.uk/spot/oxo/index. This method maps from the OMOP standard concept to an intermediate vocabulary included is OxO (ICD9CM, ICD10CM, SNOMEDCT, and MeSH), then uses the OxO API to map to other ontologies. Multiple mappings may be returned. Results are sorted by total_distance (OxO distance + OMOP distance) in ascending order.
       parameters:
         - name: concept_id
           in: query
@@ -349,10 +305,7 @@ paths:
           schema:
             type: integer
           description: >-
-            Mapping distance for OxO. Note: this is the distance used in the OxO
-            API to map from an ICD9CM, ICD10CM, SNOMEDCT, or MeSH concept to the
-            desired ontology. One additional step may be taken by the COHD API
-            to map to the OMOP standard concept to ICD9CM, ICD10CM, SNOMEDCT, or
+            Mapping distance for OxO. Note: this is the distance used in the OxO API to map from an ICD9CM, ICD10CM, SNOMEDCT, or MeSH concept to the desired ontology. One additional step may be taken by the COHD API to map to the OMOP standard concept to ICD9CM, ICD10CM, SNOMEDCT, or
             MeSH. Default: 2.
           example: 2
       operationId: xrefFromOMOP
@@ -365,8 +318,7 @@ paths:
         - Clinical Frequencies
       summary: Clinical frequency of individual concepts
       description: >-
-        Retrieves observed clinical frequencies of individual concepts. Multiple
-        concepts may be requested in a comma separated list.
+        Retrieves observed clinical frequencies of individual concepts. Multiple concepts may be requested in a comma separated list.
       parameters:
         - name: dataset_id
           in: query
@@ -374,8 +326,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: q
           in: query
@@ -383,8 +334,7 @@ paths:
           schema:
             type: string
           description: >-
-            A comma separated list of OMOP concept ids, e.g., "192855" or
-            "192855,2008271"
+            A comma separated list of OMOP concept ids, e.g., "192855" or "192855,2008271"
           example: '192855'
       operationId: singleConceptFreq
       responses:
@@ -403,8 +353,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: q
           in: query
@@ -423,8 +372,7 @@ paths:
         - Clinical Frequencies
       summary: Clinical frequencies of all pairs of concepts given a concept id
       description: >-
-        Retrieves observed clinical frequencies of all pairs of concepts given a
-        concept id. Results are returned in descending order of paired concept count. Note that the largest paired concept counts are often dominated by associated concepts with high prevalence.
+        Retrieves observed clinical frequencies of all pairs of concepts given a concept id. Results are returned in descending order of paired concept count. Note that the largest paired concept counts are often dominated by associated concepts with high prevalence.
       parameters:
         - name: dataset_id
           in: query
@@ -432,8 +380,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: q
           in: query
@@ -452,8 +399,7 @@ paths:
         - Clinical Frequencies
       summary: Clinical frequencies of all pairs of concepts given a concept id
       description: >-
-        Retrieves observed clinical frequencies of all pairs of concepts given a
-        concept id restricted by domain of the associated concept_id.  Results are returned in descending order of paired concept count. Note that the largest paired concept counts are often dominated by associated concepts with high prevalence.
+        Retrieves observed clinical frequencies of all pairs of concepts given a concept id restricted by domain of the associated concept_id.  Results are returned in descending order of paired concept count. Note that the largest paired concept counts are often dominated by associated concepts with high prevalence.
       parameters:
         - name: dataset_id
           in: query
@@ -461,8 +407,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: concept_id
           in: query
@@ -476,7 +421,7 @@ paths:
           required: true
           schema:
             type: string
-          description: 'An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc.'
+          description: 'An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc. See /metadata/domainCounts for a list of valid domain IDs.'
           example: Procedure
       operationId: associatedConceptDomainFreq
       responses:
@@ -486,7 +431,7 @@ paths:
     get:
       tags:
         - Clinical Frequencies
-      summary: Most frequent concepts
+      summary: Most frequent concepts [by domain]
       description: Retrieves the most frequent concepts.
       parameters:
         - name: dataset_id
@@ -495,8 +440,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: q
           in: query
@@ -510,7 +454,7 @@ paths:
           required: false
           schema:
             type: string
-          description: '(Optional) The domain_id to restrict to, e.g., "Condition", "Drug", "Procedure"'
+          description: '(Optional) The domain_id to restrict to, e.g., "Condition", "Drug", "Procedure". See /metadata/domainCounts for a list of valid domain IDs.'
           example: 'Condition'
       operationId: mostFrequentConcepts
       responses:
@@ -531,14 +475,11 @@ paths:
         This method has overloaded behavior based on the specified parameters:
 
 
-        1) concept_id_1 and concept_id_2: Result for the pair (concept_id_1,
-        concept_id_2)
+        1) concept_id_1 and concept_id_2: Result for the pair (concept_id_1, concept_id_2)
 
-        2) concept_id_1: Results for all pairs of concepts that include
-        concept_id_1
+        2) concept_id_1: Results for all pairs of concepts that include concept_id_1
 
-        3) concept_id_1 and domain: Results for all pairs of concepts including
-        concept_id_1 and where concept_id_2 belongs to the specified domain
+        3) concept_id_1 and domain: Results for all pairs of concepts including concept_id_1 and where concept_id_2 belongs to the specified domain
       parameters:
         - name: dataset_id
           in: query
@@ -546,8 +487,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: concept_id_1
           in: query
@@ -562,11 +502,7 @@ paths:
           schema:
             type: integer
           description: >-
-            An OMOP concept id, e.g., "2008271". If this parameter is specified,
-            then the chi-square between concept_id_1 and concept_id_2 is
-            returned. If this parameter is not specified, then a list of
-            chi-squared results between concept_id_1 and other concepts is
-            returned.
+            An OMOP concept id, e.g., "2008271". If this parameter is specified, then the chi-square between concept_id_1 and concept_id_2 is returned. If this parameter is not specified, then a list of chi-squared results between concept_id_1 and other concepts is returned.
           example: 2008271
         - name: domain
           in: query
@@ -574,9 +510,7 @@ paths:
           schema:
             type: string
           description: >-
-            An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc., to
-            restrict the associated concept (concept_id_2) to. If this parameter
-            is not specified, then the domain is unrestricted.
+            An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc., to restrict the associated concept (concept_id_2) to. If this parameter is not specified, then the domain is unrestricted. See /metadata/domainCounts for a list of valid domain IDs.
           example: Procedure
       operationId: chiSquare
       responses:
@@ -588,29 +522,23 @@ paths:
         - Concept Associations
       summary: Observed Count / Expected Count
       description: >
-        Returns the natural logarithm of the ratio between the observed
-        count and expected count. Expected count is calculated from
-        the single concept frequencies and assuming independence between the
-        concepts. Results are returned in descending order of ln_ratio.
+        Returns the natural logarithm of the ratio between the observed count and expected count. Expected count is calculated from the single concept frequencies and assuming independence between the concepts. Results are returned in descending order of ln_ratio.
         
         
         expected_count = Count_1_and_2 * num_patients / (Count_1 * Count_2)
 
 
-        ln_ratio = ln( expected_count )
+        ln_ratio = ln(expected_count)
         
 
         This method has overloaded behavior based on the specified parameters:
 
 
-        1) concept_id_1 and concept_id_2: Results for the pair (concept_id_1,
-        concept_id_2)
+        1) concept_id_1 and concept_id_2: Results for the pair (concept_id_1, concept_id_2)
 
-        2) concept_id_1: Results for all pairs of concepts that include
-        concept_id_1
+        2) concept_id_1: Results for all pairs of concepts that include concept_id_1
 
-        3) concept_id_1 and domain: Results for all pairs of concepts including
-        concept_id_1 and where concept_id_2 belongs to the specified domain
+        3) concept_id_1 and domain: Results for all pairs of concepts including concept_id_1 and where concept_id_2 belongs to the specified domain
       parameters:
         - name: dataset_id
           in: query
@@ -618,8 +546,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: concept_id_1
           in: query
@@ -634,9 +561,7 @@ paths:
           schema:
             type: integer
           description: >-
-            An OMOP concept id, e.g., "2008271". If concept_id_2 is unspecified,
-            then this method will return all pairs of concepts with
-            concept_id_1.
+            An OMOP concept id, e.g., "2008271". If concept_id_2 is unspecified, then this method will return all pairs of concepts with concept_id_1.
           example: 2008271
         - name: domain
           in: query
@@ -644,9 +569,7 @@ paths:
           schema:
             type: string
           description: >-
-            An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc., to
-            restrict the associated concept (concept_id_2) to. If this parameter
-            is not specified, then the domain is unrestricted.
+            An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc., to restrict the associated concept (concept_id_2) to. If this parameter is not specified, then the domain is unrestricted. See /metadata/domainCounts for a list of valid domain IDs.
           example: Procedure
       operationId: obsExpRatio
       responses:
@@ -658,8 +581,7 @@ paths:
         - Concept Associations
       summary: Relative frequency between pairs of concepts
       description: >
-        Calculates the relative frequency (i.e., conditional probability)
-        between pairs of concepts. Results are returned in descending order of relative frequency. Note that due to the randomization of the counts, the calcaulted relative frequencies can exceed the limit of 1.0. 
+        Calculates the relative frequency (i.e., conditional probability) between pairs of concepts. Results are returned in descending order of relative frequency. Note that due to the randomization of the counts, the calculated relative frequencies can exceed the limit of 1.0. 
 
 
         Relative Frequency = Count_1_and_2 / Count_2
@@ -668,14 +590,11 @@ paths:
         This method has overloaded behavior based on the specified parameters:
 
 
-        1) concept_id_1 and concept_id_2: Result for the pair (concept_id_1,
-        concept_id_2)
+        1) concept_id_1 and concept_id_2: Result for the pair (concept_id_1, concept_id_2)
 
-        2) concept_id_1: Results for all pairs of concepts that include
-        concept_id_1
+        2) concept_id_1: Results for all pairs of concepts that include concept_id_1
 
-        3) concept_id_1 and domain: Results for all pairs of concepts including
-        concept_id_1 and where concept_id_2 belongs to the specified domain
+        3) concept_id_1 and domain: Results for all pairs of concepts including concept_id_1 and where concept_id_2 belongs to the specified domain
       parameters:
         - name: dataset_id
           in: query
@@ -683,8 +602,7 @@ paths:
           schema:
             type: integer
           description: >-
-            The dataset_id of the dataset to query. Default dataset is the
-            5-year dataset.
+            The dataset_id of the dataset to query. Default dataset is the 5-year dataset.
           example: 1
         - name: concept_id_1
           in: query
@@ -699,9 +617,7 @@ paths:
           schema:
             type: integer
           description: >-
-            An OMOP concept id, e.g., "2008271". If concept_id_2 is unspecified,
-            then this method will return all pairs of concepts with
-            concept_id_1.
+            An OMOP concept id, e.g., "2008271". If concept_id_2 is unspecified, then this method will return all pairs of concepts with concept_id_1.
           example: 2008271
         - name: domain
           in: query
@@ -709,9 +625,7 @@ paths:
           schema:
             type: string
           description: >-
-            An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc., to
-            restrict concept_id_2 (the base concept) to. If this parameter is
-            not specified, then the domain is unrestricted.
+            An OMOP domain id, e.g., "Condition", "Drug", "Procedure", etc., to restrict concept_id_2 (the base concept) to. If this parameter is not specified, then the domain is unrestricted. See /metadata/domainCounts for a list of valid domain IDs.
           example: Procedure
       operationId: relativeFrequency
       responses:
