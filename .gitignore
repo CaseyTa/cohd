@@ -1,7 +1,8 @@
 temp/*
-cohd_mysql.cnf
+*.cnf
 .idea/*
 
+*.bak
 *.log
 *.mtx
 *.out
