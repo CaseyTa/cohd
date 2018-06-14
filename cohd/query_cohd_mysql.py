@@ -101,9 +101,10 @@ def query_db(service, method, args):
             sql = '''SELECT c.concept_id, concept_name, domain_id, vocabulary_id, concept_class_id, concept_code,
                     IFNULL(concept_count, 0E0) AS concept_count
                 FROM cohd.concept c
-                LEFT JOIN cohd.concept_counts cc ON cc.concept_id = c.concept_id 
+                LEFT JOIN cohd.concept_counts cc ON (cc.dataset_id = %(dataset_id)s AND cc.concept_id = c.concept_id)
                 WHERE concept_name like %(like_query)s AND standard_concept = 'S' 
-                    AND ((cc.dataset_id = %(dataset_id)s) OR (cc.dataset_id IS NULL)) {domain_filter} 
+                    {domain_filter} 
+                    {count_filter}
                 ORDER BY cc.concept_count DESC
                 LIMIT 1000;'''
             params = {
@@ -112,13 +113,31 @@ def query_db(service, method, args):
                 'query': query
             }
 
+            # Filter concepts by domain
             domain_id = args.get(u'domain')
             if domain_id is None or domain_id == [u''] or domain_id.isspace():
                 domain_filter = ''
             else:
                 domain_filter = 'AND domain_id = %(domain_id)s'
                 params['domain_id'] = domain_id
-            sql = sql.format(domain_filter=domain_filter)
+
+            # Filter concepts by minimum count
+            min_count = args.get(u'min_count')
+            if min_count is None or min_count == [u'']:
+                # Default to set min_count = 1
+                count_filter = 'AND cc.concept_count >= 1'
+            else:
+                if min_count.strip().isdigit():
+                    min_count = int(min_count.strip())
+                    if min_count > 0:
+                        count_filter = 'AND cc.concept_count >= %(min_count)s'
+                        params['min_count'] = min_count
+                    else:
+                        count_filter = ''
+                else:
+                    return 'min_count parameter should be an integer', 400
+
+            sql = sql.format(domain_filter=domain_filter, count_filter=count_filter)
 
             cur.execute(sql, params)
             json_return = cur.fetchall()
