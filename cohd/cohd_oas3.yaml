@@ -180,6 +180,13 @@ paths:
             type: string
           description: 'The domain (e.g., "Condition", "Drug", "Procedure") to restrict the search to. If not specified, the search will be unrestricted. See /metadata/domainCounts for a list of valid domain IDs.'
           example: 'Condition'
+        - name: min_count
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: 'The minimum concept count (inclusive) to include a concept in the search results. Setting the min_count to 0 will cause findConceptIDs to return all matching standard OMOP concepts (this can be slow). Setting the min_count to 1 will cause findConceptIDs to only return concepts with count data (much faster). Default: 1.'
+          example: 1
       operationId: findConceptIDs
       responses:
         default:
