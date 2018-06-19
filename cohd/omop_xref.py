@@ -19,6 +19,20 @@ _OMOP_VOCAB_TO_OXO_PREFIX = {
 }
 
 
+def omop_vocab_to_oxo_prefix(vocab):
+    """ Attempt to lookup the corresponding OxO prefix from the OMOP vocabulary ID
+
+    Uses the mapping defined in _OMOP_VOCAB_TO_OXO_PREFIX, but if no mapping is found, returns the vocabulary
+
+    :param vocab: string - OMOP vocabulary_id
+    :return: string - OxO prefix
+    """
+    prefix = vocab
+    if vocab in _OMOP_VOCAB_TO_OXO_PREFIX:
+        prefix = _OMOP_VOCAB_TO_OXO_PREFIX[vocab]
+    return prefix
+
+
 def omop_concept_lookup(cur, concept_id):
     """ Look up concept info
 
@@ -100,7 +114,12 @@ def omop_map_from_standard(cur, concept_id, vocabularies=None):
     sql += 'ORDER BY c.vocabulary_id ASC, c.concept_code ASC;'
 
     cur.execute(sql, params)
-    return cur.fetchall()
+    results = cur.fetchall()
+    if results == ():
+        # If no results, return an empty list
+        results = []
+
+    return results
 
 
 def oxo_search(ids, input_source=None, mapping_targets=[], distance=2):
@@ -193,29 +212,40 @@ def xref_from_omop_standard_concept(cur, concept_id, mapping_targets=[], distanc
     :param distance: OxO distance
     :return: List of mappings
     """
+    curies = []
     mappings = []
+    search_results = []
     total_distances = []
 
-    # Get standard concept ID info
+    # Get concept ID info
     source_info = omop_concept_lookup(cur, concept_id)
     if len(source_info) == 0:
-        # concept_id not found
+        # concept_id not found, return empty results
         return []
     source_info = source_info[0]
 
     # Map to compatible vocabularies (ICD9CM, ICD10CM, MeSH, and SNOMED)
     omop_mappings = omop_map_from_standard(cur, concept_id, _OXO_OMOP_VOCABULARIES)
-
-    # Build the CURIEs
-    curies = []
+    found_source = False
     for omop_mapping in omop_mappings:
-        prefix = _OMOP_VOCAB_TO_OXO_PREFIX[omop_mapping[u'vocabulary_id']]
+        prefix = omop_vocab_to_oxo_prefix(omop_mapping[u'vocabulary_id'])
         curie = prefix + ':' + omop_mapping[u'concept_code']
         curies.append(curie)
 
+        # Check if the source concept is included in the mappings
+        found_source = found_source or (omop_mapping[u'concept_id'] == source_info[u'concept_id'])
+
+    # Add the source concept definition if not already in OMOP mappings (e.g., source concept is not a standard concept)
+    if not found_source and source_info[u'vocabulary_id'] in _OMOP_VOCAB_TO_OXO_PREFIX:
+        prefix = omop_vocab_to_oxo_prefix(source_info[u'vocabulary_id'])
+        curie = prefix + ':' + source_info[u'concept_code']
+        curies.append(curie)
+        omop_mappings.append(source_info)
+
     # Call OxO to map to a vocabulary that OMOP knows
-    j = oxo_search(curies, mapping_targets=mapping_targets, distance=distance)
-    search_results = j[u'_embedded'][u'searchResults']
+    if len(curies) > 0:
+        j = oxo_search(curies, mapping_targets=mapping_targets, distance=distance)
+        search_results = j[u'_embedded'][u'searchResults']
 
     # Combine OxO mappings with OMOP mappings
     for i, search_result in enumerate(search_results):
@@ -226,7 +256,7 @@ def xref_from_omop_standard_concept(cur, concept_id, mapping_targets=[], distanc
 
         # Add info from OMOP mapping to the search result
         omop_mapping = omop_mappings[i]
-        omop_distance = int(omop_mapping[u'standard_concept'] != u'S')
+        omop_distance = int(omop_mapping[u'concept_id'] != concept_id)
 
         for mr in mrl:
             oxo_distance = mr[u'distance']
